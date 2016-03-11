@@ -4,6 +4,11 @@ classdef DisjointSets < Handle  % Union-Find data structure
         numSets  % Current number of lists
     end
     methods
+        function obj = DisjointSets()
+            obj.setList = cell(1000);  % initial capacity
+            obj.numSets = 0;
+        end
+        
         function [y] = find(this, x)  % returns the head of the list in which x is found
             for s = 1:this.numSets
                 set = this.setList(s);
@@ -15,7 +20,7 @@ classdef DisjointSets < Handle  % Union-Find data structure
                     end
                 end
             end
-            print('The given parameter was not found.');
+            disp('The given parameter was not found.');
         end
         
         function addBox(this, b)
@@ -29,6 +34,15 @@ classdef DisjointSets < Handle  % Union-Find data structure
             this.numSets = this.numSets + 1;
         end
         
+        function deleteList(this, l)
+            for s = 1:this.numSets
+                if this.setList(s) == l
+                    this.setList(s) = [];
+                    return;
+                end
+            end
+        end
+        
         function union(this, x, y)
             % Find and concatenate the lists to which x and y belong.
             xList = this.find(x);
@@ -37,12 +51,14 @@ classdef DisjointSets < Handle  % Union-Find data structure
             this.addList(unioned);
             
             % Delete the original x and y lists.
-            % Search for x and y in setlist, and set them to []
+            this.deleteList(xList);
+            this.deleteList(yList);
         end
         
-        function obj = DisjointSets()
-            obj.setList = cell(1000);  % initial capacity
-            obj.numSets = 0;
+        function print(this)
+            for s = 1:this.numSets
+                disp(this.setList(s))
+            end
         end
         
     end
