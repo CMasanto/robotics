@@ -1,0 +1,38 @@
+classdef Set  % Union-Find data structure
+    properties
+        initialCapacity  % starting size of each set in the set list
+        currentSize  % current size of the set
+        capacity  % maximum number of elements that can exist in the set
+    end
+    methods
+        function [y] = find(x)
+        end
+        
+        function [] = add(x)
+        end
+        
+        function [] = union(x, y)
+            if (strcmp(x.label, 'free') == 0)
+                print('Parameter 1 is not a free Box')
+                return
+            end
+            if (strcmp(y.label, 'free') == 0)
+                print('Parameter 2 is not a free Box')
+                return
+            end
+            
+        end
+        
+        function obj = DisjointSets()
+            obj.numSets = 0;
+            obj.maxListSize = 10000;
+            
+            % Creates the list
+            obj.setList(1, maxListSize) = ObjectConstructor();
+            for n = 1:maxSize
+                obj.setList(n) = ObjectConstructor();
+            end
+        end
+        
+    end
+end
