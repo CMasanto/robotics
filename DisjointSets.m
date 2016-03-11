@@ -1,43 +1,43 @@
-classdef DisjointSets < Handle  % Union-Find data structure
+classdef DisjointSets < handle  % Union-Find data structure
     properties
         setList  % The cell array of BoxList objects
         numSets  % Current number of lists
     end
     methods
         function obj = DisjointSets()
-            obj.setList = cell(1000);  % initial capacity
+            obj.setList = cell(1, 100);  % initial capacity
             obj.numSets = 0;
         end
         
-        function [y] = find(this, x)  % returns the head of the list in which x is found
+        function y = find(this, x)  % returns the head of the list in which x is found
             for s = 1:this.numSets
-                set = this.setList(s);
+                set = this.setList{s};
                 for b = 1:set.numBoxes
-                    box = set.list(b);
-                    if box == x
+                    box = set.list{b};
+                    if isequal(box, x)
                        y = set;  % the set to which x belongs
+                       disp(y);
                        break;
                     end
                 end
             end
-            disp('The given parameter was not found.');
         end
         
         function addBox(this, b)
-            this.setList(this.numSets) = BoxList();
-            this.setList(this.numSets).addBox(b);
             this.numSets = this.numSets + 1;
+            this.setList{this.numSets} = BoxList();
+            this.setList{this.numSets}.addBox(b);
         end
         
         function addList(this, l)
-            this.setList(this.numSets) = l;
             this.numSets = this.numSets + 1;
+            this.setList{this.numSets} = l;
         end
         
         function deleteList(this, l)
             for s = 1:this.numSets
-                if this.setList(s) == l
-                    this.setList(s) = [];
+                if this.setList{s} == l
+                    this.setList{s} = [];
                     return;
                 end
             end
@@ -56,9 +56,11 @@ classdef DisjointSets < Handle  % Union-Find data structure
         end
         
         function print(this)
+            disp('HEAD---------------HEAD---------------HEAD');
             for s = 1:this.numSets
                 disp(this.setList(s))
             end
+            disp('TAIL---------------TAIL---------------TAIL');
         end
         
     end
