@@ -53,6 +53,17 @@ classdef Box < handle % supposed to be square
             obj.topLeftChild = BS{4};
         end
         
+        function y = leftAdjBoxes(obj)
+        end
+        
+        function y = rightAdjBoxes()
+        end
+        
+        function y = topAdjBoxes
+        end
+        
+        function y = bottomLeftAdjBoxes
+        end
     end
 end
 

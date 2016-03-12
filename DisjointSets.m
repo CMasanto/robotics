@@ -9,7 +9,7 @@ classdef DisjointSets < handle  % Union-Find data structure
             obj.numSets = 0;
         end
         
-        function y = find(this, x)  % returns the head of the list in which x is found
+        function y = find(this, x)  % returns the list in which x is found
             for s = 1:this.numSets
                 boxList = this.setList{s};
                 for b = 1:boxList.numBoxes
@@ -63,7 +63,8 @@ classdef DisjointSets < handle  % Union-Find data structure
                 disp('-------Set Start--------');
                 l = this.setList{s};
                 for b = 1:l.numBoxes
-                    disp(l.list{b});
+                    disp(l.list{b}.x);
+                    disp(l.list{b}.y);
                 end
                 disp('-------Set End--------');
             end
