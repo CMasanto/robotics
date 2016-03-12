@@ -11,12 +11,11 @@ classdef DisjointSets < handle  % Union-Find data structure
         
         function y = find(this, x)  % returns the head of the list in which x is found
             for s = 1:this.numSets
-                set = this.setList{s};
-                for b = 1:set.numBoxes
-                    box = set.list{b};
+                boxList = this.setList{s};
+                for b = 1:boxList.numBoxes
+                    box = boxList.list{b};
                     if isequal(box, x)
-                       y = set;  % the set to which x belongs
-                       disp(y);
+                       y = boxList;  % the set to which x belongs
                        break;
                     end
                 end
@@ -47,18 +46,26 @@ classdef DisjointSets < handle  % Union-Find data structure
             % Find and concatenate the lists to which x and y belong.
             xList = this.find(x);
             yList = this.find(y);
-            unioned = horzcat(xList, yList);
-            this.addList(unioned);
+            for b = 1:yList.numBoxes
+                xList.addBoxesFromList(yList);
+            end
             
             % Delete the original x and y lists.
-            this.deleteList(xList);
             this.deleteList(yList);
+            emptyCells = cellfun('isempty', this.setList); 
+            this.setList(emptyCells) = [];
+            this.numSets = this.numSets - 1;
         end
         
         function print(this)
             disp('HEAD---------------HEAD---------------HEAD');
             for s = 1:this.numSets
-                disp(this.setList(s))
+                disp('-------Set Start--------');
+                l = this.setList{s};
+                for b = 1:l.numBoxes
+                    disp(l.list{b});
+                end
+                disp('-------Set End--------');
             end
             disp('TAIL---------------TAIL---------------TAIL');
         end

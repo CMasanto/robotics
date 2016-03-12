@@ -11,7 +11,7 @@ classdef BoxList < handle  % Represents a list of boxes
         
         function addBoxesFromList(this, bl)  % add all Boxes from a list
             for b = 1:bl.numBoxes
-                this.numBoxes = this.size + 1;
+                this.numBoxes = this.numBoxes + 1;
                 this.list{this.numBoxes} = bl.list{b};
             end
         end
