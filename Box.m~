@@ -22,6 +22,12 @@ classdef Box < handle % supposed to be square
             obj.radius = norm([x(1); y(1)]-obj.center);
             obj.size = x(2)-x(1);
             obj.label = 'mixed';
+            
+            obj.parent = 
+            obj.topLeftChild
+            obj.topRightChild
+            obj.bottomLeftChild
+            obj.bottomRightChild
         end
         function BS = split(obj)
             x1 = obj.x(1);  % bottom left x
@@ -57,7 +63,7 @@ classdef Box < handle % supposed to be square
         % through every box (specifically, every leaf of the subdivision
         % tree) and check if it shares a side with the box.
         function allLeaves = getAllLeaves(obj)            
-            hasChildren = ~ISNAN(obj.topLeftChild);
+            hasChildren = ~isEmpty(obj.topLeftChild);
             numLeaves = 0;
             allLeaves = cell(100, 1);  % Pre-allocate 100 cells.
             
@@ -98,7 +104,7 @@ classdef Box < handle % supposed to be square
         % Returns the root of the subdivision tree
         function b = getRoot(obj)
             b = obj;
-            while ~ISNAN(b.parent)  % Only the root has a NaN parent
+            while ~isEmpty(b.parent)  % Only the root has a NaN parent
                 b = b.parent;
             end
         end
@@ -125,28 +131,28 @@ classdef Box < handle % supposed to be square
                smallerBox = b;
            end
            
-           % If the distance between two boxes is greater than or equal to
-           % the sum of their radii, they cannot possibly be adjacent.
-           if dist(obj, b) < obj.radius + b.radius
-               [xi, yi] = polyxpoly(obj.x, obj.y, b.x, b.y);
-               numSharedPoints = 0;
-               for p = 1:length(xi)
-                   if (xi{p} == smallerBox.x(1) && yi{p} == smallerBox.y(1))
-                       
-                   end
-                   
-                   if (xi{p} == smallerBox.x(2) && yi{p} == smallerBox.y(2))
-                       
-                   end
-                   
-                   if (xi{p} == smallerBox.x(3) && yi{p} == smallerBox.y(3))
-                       
-                   end
-                   
-                   if (xi{p} == smallerBox.x(3) && yi{p} == smallerBox.y(3))
-                       
-                   end
+           [xi, yi] = polyxpoly(obj.x, obj.y, b.x, b.y);
+           numSharedPoints = 0;
+           for p = 1:length(xi)
+               if (xi{p} == smallerBox.x(1) && yi{p} == smallerBox.y(1))
+                   numSharedPoints = numSharedPoints + 1;
                end
+
+               if (xi{p} == smallerBox.x(2) && yi{p} == smallerBox.y(2))
+                   numSharedPoints = numSharedPoints + 1;
+               end
+
+               if (xi{p} == smallerBox.x(3) && yi{p} == smallerBox.y(3))
+                   numSharedPoints = numSharedPoints + 1;
+               end
+
+               if (xi{p} == smallerBox.x(3) && yi{p} == smallerBox.y(3))
+                   numSharedPoints = numSharedPoints + 1;
+               end
+           end
+           
+           if numSharedPoints >= 2
+                sharesEdge = TRUE;
            end
         end
     end

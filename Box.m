@@ -22,6 +22,12 @@ classdef Box < handle % supposed to be square
             obj.radius = norm([x(1); y(1)]-obj.center);
             obj.size = x(2)-x(1);
             obj.label = 'mixed';
+            
+            obj.parent = [];
+            obj.topLeftChild = [];
+            obj.topRightChild = [];
+            obj.bottomLeftChild = [];
+            obj.bottomRightChild = [];
         end
         function BS = split(obj)
             x1 = obj.x(1);  % bottom left x
@@ -35,7 +41,7 @@ classdef Box < handle % supposed to be square
             % Bottom-left Box
             BS{1} = Box([x1 xM xM x1],[y1 y1 yM yM]);
             BS{1}.parent = obj;
-            obj.bottomRightChild = BS{1};
+            obj.bottomLeftChild = BS{1};
             
             % Bottom-right Box
             BS{2} = Box([xM x2 x2 xM],[y1 y1 yM yM]);
@@ -56,8 +62,8 @@ classdef Box < handle % supposed to be square
         % The simplest way to obtain all adjacent boxes is to search
         % through every box (specifically, every leaf of the subdivision
         % tree) and check if it shares a side with the box.
-        function allLeaves = getAllLeaves(obj)            
-            hasChildren = ~ISNAN(obj.topLeftChild);
+        function allLeaves = getAllLeaves(obj)
+            hasChildren = ~isempty(obj.topLeftChild);
             numLeaves = 0;
             allLeaves = cell(100, 1);  % Pre-allocate 100 cells.
             
@@ -98,7 +104,7 @@ classdef Box < handle % supposed to be square
         % Returns the root of the subdivision tree
         function b = getRoot(obj)
             b = obj;
-            while ~ISNAN(b.parent)  % Only the root has a NaN parent
+            while ~isempty(b.parent)  % Only the root has a NaN parent
                 b = b.parent;
             end
         end
