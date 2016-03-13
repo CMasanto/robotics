@@ -52,17 +52,102 @@ classdef Box < handle % supposed to be square
             BS{4}.parent = obj;
             obj.topLeftChild = BS{4};
         end
-        
-        function y = leftAdjBoxes(obj)
+
+        % The simplest way to obtain all adjacent boxes is to search
+        % through every box (specifically, every leaf of the subdivision
+        % tree) and check if it shares a side with the box.
+        function allLeaves = getAllLeaves(obj)            
+            hasChildren = ~ISNAN(obj.topLeftChild);
+            numLeaves = 0;
+            allLeaves = cell(100, 1);  % Pre-allocate 100 cells.
+            
+            if hasChildren
+                tlc = getAllLeaves(obj.topLeftChild);
+                trc = getAllLeaves(obj.topRightChild);
+                blc = getAllLeaves(obj.bottomLeftChild);
+                brc = getAllLeaves(obj.bottomRightChild);
+                
+                for b = 1:length(tlc)
+                    numLeaves = numLeaves + 1;
+                    allLeaves{numLeaves} = tlc{b};
+                end
+                
+                for b = 1:length(trc)
+                    numLeaves = numLeaves + 1;
+                    allLeaves{numLeaves} = trc{b};
+                end
+                
+                for b = 1:length(blc)
+                    numLeaves = numLeaves + 1;
+                    allLeaves{numLeaves} = blc{b};
+                end
+                
+                for b = 1:length(brc)
+                    numLeaves = numLeaves + 1;
+                    allLeaves{numLeaves} = brc{b};
+                end
+            else
+                numLeaves = numLeaves + 1;
+                allLeaves{numLeaves} = obj;
+            end
+            
+            emptyCells = cellfun('isempty', allLeaves); 
+            allLeaves(emptyCells) = [];
         end
         
-        function y = rightAdjBoxes()
+        % Returns the root of the subdivision tree
+        function b = getRoot(obj)
+            b = obj;
+            while ~ISNAN(b.parent)  % Only the root has a NaN parent
+                b = b.parent;
+            end
         end
         
-        function y = topAdjBoxes
+        % Returns all boxes neighboring a given box
+        function neighbors = getAdjBoxes(obj)
+            root = getRoot(obj);
+            leaves = getAllLeaves(root);
+            neighbors = cell(100, 1);  % Pre-allocate 100 cells.
+            numNeighbors = 0;
+            for l = 1:length(leaves)
+                if obj.sharesEdgeWith(l) && obj ~= l
+                    numNeighbors = numNeighbors + 1;
+                    neighbors(numNeighbors)
+                end
+            end
         end
         
-        function y = bottomLeftAdjBoxes
+        % Determines if two boxes share an edge
+        function sharesEdge = sharesEdgeWith(obj, b)
+           sharesEdge = FALSE;
+           smallerBox = obj;
+           if b.radius < smallerBox.radius
+               smallerBox = b;
+           end
+           
+           % If the distance between two boxes is greater than or equal to
+           % the sum of their radii, they cannot possibly be adjacent.
+           if dist(obj, b) < obj.radius + b.radius
+               [xi, yi] = polyxpoly(obj.x, obj.y, b.x, b.y);
+               numSharedPoints = 0;
+               for p = 1:length(xi)
+                   if (xi{p} == smallerBox.x(1) && yi{p} == smallerBox.y(1))
+                       
+                   end
+                   
+                   if (xi{p} == smallerBox.x(2) && yi{p} == smallerBox.y(2))
+                       
+                   end
+                   
+                   if (xi{p} == smallerBox.x(3) && yi{p} == smallerBox.y(3))
+                       
+                   end
+                   
+                   if (xi{p} == smallerBox.x(3) && yi{p} == smallerBox.y(3))
+                       
+                   end
+               end
+           end
         end
     end
 end
