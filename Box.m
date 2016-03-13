@@ -29,6 +29,9 @@ classdef Box < handle % supposed to be square
             obj.bottomLeftChild = [];
             obj.bottomRightChild = [];
         end
+        
+        
+        
         function BS = split(obj)
             x1 = obj.x(1);  % bottom left x
             x2 = obj.x(2);  % bottom right x
@@ -59,6 +62,8 @@ classdef Box < handle % supposed to be square
             obj.topLeftChild = BS{4};
         end
 
+        
+        
         % The simplest way to obtain all adjacent boxes is to search
         % through every box (specifically, every leaf of the subdivision
         % tree) and check if it shares a side with the box.
@@ -101,6 +106,8 @@ classdef Box < handle % supposed to be square
             allLeaves(emptyCells) = [];
         end
         
+        
+        
         % Returns the root of the subdivision tree
         function b = getRoot(obj)
             b = obj;
@@ -109,6 +116,8 @@ classdef Box < handle % supposed to be square
             end
         end
         
+        
+        
         % Returns all boxes neighboring a given box
         function neighbors = getAdjBoxes(obj)
             root = getRoot(obj);
@@ -116,43 +125,83 @@ classdef Box < handle % supposed to be square
             neighbors = cell(100, 1);  % Pre-allocate 100 cells.
             numNeighbors = 0;
             for l = 1:length(leaves)
-                if obj.sharesEdgeWith(l) && obj ~= l
+                leaf = leaves{l};
+                if obj ~= leaf && obj.sharesEdgeWith(leaf)
                     numNeighbors = numNeighbors + 1;
-                    neighbors(numNeighbors)
+                    neighbors{numNeighbors} = leaf;
                 end
             end
+            
+            emptyCells = cellfun('isempty', neighbors); 
+            neighbors(emptyCells) = [];
         end
+        
+        
         
         % Determines if two boxes share an edge
         function sharesEdge = sharesEdgeWith(obj, b)
-           sharesEdge = FALSE;
-           smallerBox = obj;
-           if b.radius < smallerBox.radius
-               smallerBox = b;
+           sharesEdge = false;
+           smallB = obj;
+           largeB = b;
+           if b.radius < obj.radius
+               smallB = b;
+               largeB = obj;
            end
            
-           [xi, yi] = polyxpoly(obj.x, obj.y, b.x, b.y);
-           numSharedPoints = 0;
-           for p = 1:length(xi)
-               if (xi{p} == smallerBox.x(1) && yi{p} == smallerBox.y(1))
-                   numSharedPoints = numSharedPoints + 1;
+           % If the midpoint of an edge of the smaller Box is shared,
+           % then the Boxes intersect.
+           smallEdgeMidptsX = [smallB.x(1), smallB.center(1), ...
+               smallB.x(2), smallB.center(1)];
+           smallEdgeMidptsY = [smallB.center(2), smallB.y(2)...
+               smallB.center(2), smallB.y(3)];
+           
+           for mp = 1:length(smallEdgeMidptsX)
+               % Test if left edge of larger Box contains a midpoint
+               % of a smaller Box's edge.
+               if largeB.y(1) < smallEdgeMidptsY(mp) && largeB.y(4) > ...
+                       smallEdgeMidptsY(mp) && smallEdgeMidptsX(mp) == ...
+                       largeB.x(1)
+                   sharesEdge = true;
+                   return;
                end
-
-               if (xi{p} == smallerBox.x(2) && yi{p} == smallerBox.y(2))
-                   numSharedPoints = numSharedPoints + 1;
+               
+               % Test if right edge of larger Box contains a midpoint
+               % of a smaller Box's edge.
+               if largeB.y(2) < smallEdgeMidptsY(mp) && largeB.y(3) > ...
+                       smallEdgeMidptsY(mp) && smallEdgeMidptsX(mp) == ...
+                       largeB.x(2)
+                   sharesEdge = true;
+                   return;
                end
-
-               if (xi{p} == smallerBox.x(3) && yi{p} == smallerBox.y(3))
-                   numSharedPoints = numSharedPoints + 1;
+               
+               % Test if top edge of larger Box contains a midpoint
+               % of a smaller Box's edge.
+               if largeB.x(4) < smallEdgeMidptsX(mp) && largeB.x(3) > ...
+                       smallEdgeMidptsX(mp) && smallEdgeMidptsY(mp) == ...
+                       largeB.y(3)
+                   sharesEdge = true;
+                   return;
                end
-
-               if (xi{p} == smallerBox.x(3) && yi{p} == smallerBox.y(3))
-                   numSharedPoints = numSharedPoints + 1;
+               
+               % Test if bottom edge of larger Box contains a midpoint
+               % of a smaller Box's edge.
+               if largeB.x(1) < smallEdgeMidptsX(mp) && largeB.x(2) > ...
+                       smallEdgeMidptsX(mp) && smallEdgeMidptsY(mp) == ...
+                       largeB.y(1)
+                   sharesEdge = true;
+                   return;
                end
            end
-           
-           if numSharedPoints >= 2
-                sharesEdge = TRUE;
+        end
+        
+        function draw(obj)
+           rectangle('Position',[obj.x(1) obj.y(1) obj.size obj.size]);
+           hasChildren = ~isempty(obj.topLeftChild);
+           if hasChildren
+                obj.topLeftChild.draw();
+                obj.topRightChild.draw();
+                obj.bottomLeftChild.draw();
+                obj.bottomRightChild.draw();
            end
         end
     end

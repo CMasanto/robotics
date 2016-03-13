@@ -1,30 +1,27 @@
 README FILE
 
-March 2016:
-This folder contains the preliminary matlab programs
-for solving the path planning algorithm question in Homework 2.
-Please study them and use them as the basis for your solution.
-You are free to modify them in anyway you like.
-
-As discussed in lecture today, there are some missing elements
-required for the homework:
-	(1) Union-Find Data structure
-	(2) Maintaining adjacency of boxes
-		(only needed for FREE/MIXED boxes)
-	(3) Search Strategies
-	(4) Final Path planning
-
-
-NOTES:
-In hw2, we ask you to represent boxes as a pair of points.
-	Please ignore that suggestion, and treat boxes just as you
-	would treat any polygon.  Recall that we said that
-	a polygon with n vertices should be represented 
-	as two vectors X, Y of the length n.  This is the format
-	that the "patch" method requires.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
---Chee Yap and Marcelo Cicconet
-Robotics Class, Spring 2016
-Mar 8, 2016
+Corey Masanto
+Marcus Vinicius de Resende Maia Leite
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+We implemented our Union-Find data structure in the DisjointSets class.
+This class contains a list of lists; adding a Box to this data structure
+creates a new list of size 1, with only this Box within it.
+The find operation returns the list in which this Box exists, and the union
+operation takes the two input Boxes, and combines their lists together, 
+with the two original lists being removed from the DsjointSets list of
+lists.
+
+The subdivision tree is implemented by giving each Box a total of 5
+pointers:
+parent
+topLeftChild
+topRightChild
+bottomLeftChild
+bottomRightChild
+
+A brute-force algorithm is used to determine adjacent Boxes. Every box is
+compared to the current Box, and if the smaller of 2 Boxes (that are 
+being compared) has an edge midpoint that lies on a larger Box's edge,
+they are determined to be adjacent.

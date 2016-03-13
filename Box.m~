@@ -23,12 +23,15 @@ classdef Box < handle % supposed to be square
             obj.size = x(2)-x(1);
             obj.label = 'mixed';
             
-            obj.parent = 
-            obj.topLeftChild
-            obj.topRightChild
-            obj.bottomLeftChild
-            obj.bottomRightChild
+            obj.parent = [];
+            obj.topLeftChild = [];
+            obj.topRightChild = [];
+            obj.bottomLeftChild = [];
+            obj.bottomRightChild = [];
         end
+        
+        
+        
         function BS = split(obj)
             x1 = obj.x(1);  % bottom left x
             x2 = obj.x(2);  % bottom right x
@@ -41,7 +44,7 @@ classdef Box < handle % supposed to be square
             % Bottom-left Box
             BS{1} = Box([x1 xM xM x1],[y1 y1 yM yM]);
             BS{1}.parent = obj;
-            obj.bottomRightChild = BS{1};
+            obj.bottomLeftChild = BS{1};
             
             % Bottom-right Box
             BS{2} = Box([xM x2 x2 xM],[y1 y1 yM yM]);
@@ -59,11 +62,13 @@ classdef Box < handle % supposed to be square
             obj.topLeftChild = BS{4};
         end
 
+        
+        
         % The simplest way to obtain all adjacent boxes is to search
         % through every box (specifically, every leaf of the subdivision
         % tree) and check if it shares a side with the box.
-        function allLeaves = getAllLeaves(obj)            
-            hasChildren = ~isEmpty(obj.topLeftChild);
+        function allLeaves = getAllLeaves(obj)
+            hasChildren = ~isempty(obj.topLeftChild);
             numLeaves = 0;
             allLeaves = cell(100, 1);  % Pre-allocate 100 cells.
             
@@ -101,13 +106,17 @@ classdef Box < handle % supposed to be square
             allLeaves(emptyCells) = [];
         end
         
+        
+        
         % Returns the root of the subdivision tree
         function b = getRoot(obj)
             b = obj;
-            while ~isEmpty(b.parent)  % Only the root has a NaN parent
+            while ~isempty(b.parent)  % Only the root has a NaN parent
                 b = b.parent;
             end
         end
+        
+        
         
         % Returns all boxes neighboring a given box
         function neighbors = getAdjBoxes(obj)
@@ -116,43 +125,97 @@ classdef Box < handle % supposed to be square
             neighbors = cell(100, 1);  % Pre-allocate 100 cells.
             numNeighbors = 0;
             for l = 1:length(leaves)
-                if obj.sharesEdgeWith(l) && obj ~= l
+                leaf = leaves{l};
+                if obj ~= leaf && obj.sharesEdgeWith(leaf)
                     numNeighbors = numNeighbors + 1;
-                    neighbors(numNeighbors)
+                    neighbors{numNeighbors} = leaf;
                 end
             end
+            
+            emptyCells = cellfun('isempty', neighbors); 
+            neighbors(emptyCells) = [];
         end
+        
+        
         
         % Determines if two boxes share an edge
         function sharesEdge = sharesEdgeWith(obj, b)
-           sharesEdge = FALSE;
-           smallerBox = obj;
-           if b.radius < smallerBox.radius
-               smallerBox = b;
+           sharesEdge = false;
+           smallB = obj;
+           if b.radius < smallB.radius
+               smallB = b;
            end
            
-           [xi, yi] = polyxpoly(obj.x, obj.y, b.x, b.y);
-           numSharedPoints = 0;
-           for p = 1:length(xi)
-               if (xi{p} == smallerBox.x(1) && yi{p} == smallerBox.y(1))
-                   numSharedPoints = numSharedPoints + 1;
-               end
-
-               if (xi{p} == smallerBox.x(2) && yi{p} == smallerBox.y(2))
-                   numSharedPoints = numSharedPoints + 1;
-               end
-
-               if (xi{p} == smallerBox.x(3) && yi{p} == smallerBox.y(3))
-                   numSharedPoints = numSharedPoints + 1;
-               end
-
-               if (xi{p} == smallerBox.x(3) && yi{p} == smallerBox.y(3))
-                   numSharedPoints = numSharedPoints + 1;
-               end
-           end
+           % If the midpoint of an edge of the smaller Box is shared,
+           % then the Boxes intersect.
+           smallEdgeMidptsX = [smallB.x(1), smallB.center(1), ...
+               smallB.x(2), smallB.center(1)];
+           smallEdgeMidptsY = [smallB.center(2), smallB.y(2)...
+               smallB.center(2), smallB.y(3)];
            
-           if numSharedPoints >= 2
-                sharesEdge = TRUE;
+           for mp = 1:length(smallEdgeMidptsX)
+               % Test if left edge of larger Box contains a midpoint
+               % of a smaller Box's edge.
+               if obj.y(1) <= smallEdgeMidptsY(mp) && obj.y(4) >= ...
+                       smallEdgeMidptsY(mp) && smallEdgeMidptsX(mp) == ...
+                       obj.x(1)
+                   sharesEdge = true;
+                   return;
+               end
+               
+               % Test if right edge of larger Box contains a midpoint
+               % of a smaller Box's edge.
+               if obj.y(2) <= smallEdgeMidptsY(mp) && obj.y(3) >= ...
+                       smallEdgeMidptsY(mp) && smallEdgeMidptsX(mp) == ...
+                       obj.x(2)
+                   sharesEdge = true;
+                   return;
+               end
+               
+               % Test if top edge of larger Box contains a midpoint
+               % of a smaller Box's edge.
+               if obj.x(4) <= smallEdgeMidptsX(mp) && obj.x(3) >= ...
+                       smallEdgeMidptsX(mp) && smallEdgeMidptsY(mp) == ...
+                       obj.y(3)
+                   sharesEdge = true;
+                   return;
+               end
+               
+               % Test if bottom edge of larger Box contains a midpoint
+               % of a smaller Box's edge.
+               if obj.x(4) <= smallEdgeMidptsX(mp) && obj.x(3) >= ...
+                       smallEdgeMidptsX(mp) && smallEdgeMidptsY(mp) == ...
+                       obj.y(1)
+                   sharesEdge = true;
+                   return;
+               end
+%                if (xi(p) == smallerBox.x(1) && yi(p) == smallerBox.y(1))
+%                    numSharedPoints = numSharedPoints + 1;
+%                end
+% 
+%                if (xi(p) == smallerBox.x(2) && yi(p) == smallerBox.y(2))
+%                    numSharedPoints = numSharedPoints + 1;
+%                end
+% 
+%                if (xi(p) == smallerBox.x(3) && yi(p) == smallerBox.y(3))
+%                    numSharedPoints = numSharedPoints + 1;
+%                end
+% 
+%                if (xi(p) == smallerBox.x(4) && yi(p) == smallerBox.y(4))
+%                    numSharedPoints = numSharedPoints + 1;
+%                end
+
+           end
+        end
+        
+        function draw(obj)
+           rectangle('Position',[obj.x(1) obj.y(1) obj.size obj.size]);
+           hasChildren = ~isempty(obj.topLeftChild);
+           if hasChildren
+                obj.topLeftChild.draw();
+                obj.topRightChild.draw();
+                obj.bottomLeftChild.draw();
+                obj.bottomRightChild.draw();
            end
         end
     end

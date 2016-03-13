@@ -9,7 +9,7 @@ BS1111 = BS111{3}.split();
 BS11111 = BS1111{4}.split();
 
 box.draw();
-bTest = BS1{2};
+bTest = BS1{3};%fix queue
 rectangle('Position',[bTest.x(1) bTest.y(1) bTest.size bTest.size],...
     'FaceColor','y');
 
