@@ -20,12 +20,18 @@ DS = DisjointSets();
 freeBoxes = cell(30, 1);
 numFree = 0;
 
+startPos = [test.start-test.radius test.start-radius...
+    2*test.radius 2*test.radius];
+startPos = [test.goal-test.radius test.start-radius...
+    2*test.radius 2*test.radius];
+
 disp('Mixed box assignment phase...')
 [B,Q] = getmixedbox(Q);
 while ~isempty(B) % there is a 'mixed' box      
     BS = B.split; % all boxes are initilized as 'mixed'
     for i = 1:4
         BS{i}.draw();
+        rectangle('Position', startPos, 'Curvature', [1 1])
         hold on
         
         if BS{i}.radius < minradius
@@ -75,27 +81,28 @@ end
 % When all free boxes have been added, union them
 
 disp('Drawing phase...')
-for i = 1:length(Q)
-    B = Q{i};
-    if strcmp(B.label,'stuck')
-        patch(B.x,B.y,'red')
-    elseif strcmp(B.label,'free')
-        patch(B.x,B.y,'green')
-    elseif strcmp(B.label,'small')
-        patch(B.x,B.y,'blue')
-    elseif strcmp(B.label,'mixed')
-        patch(B.x,B.y,'yellow')
-    end
-end
+% for i = 1:length(Q)
+%     B = Q{i};
+%     if strcmp(B.label,'stuck')
+%         patch(B.x,B.y,'red')
+%     elseif strcmp(B.label,'free')
+%         patch(B.x,B.y,'green')
+%     elseif strcmp(B.label,'small')
+%         patch(B.x,B.y,'blue')
+%     elseif strcmp(B.label,'mixed')
+%         patch(B.x,B.y,'yellow')
+%     end
+% end
 
 % Draw env
-for i = 1:length(test.env)
-   numPoints = test.env(i)
+root.draw();
+for i = 1:length(E)
+    p = E{i};
+    fill(p(1,:), p(2,:), 'm')
 end
 
 DS.print();
 
 disp('Process complete.')
-axis([0 root.size 0 root.size])
 
 %axis equal, axis tight, axis off

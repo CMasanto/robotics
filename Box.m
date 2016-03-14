@@ -205,7 +205,7 @@ classdef Box < handle % supposed to be square
                     obj.size], 'FaceColor','g');
             elseif strcmp(obj.label,'small')
                 rectangle('Position',[obj.x(1) obj.y(1) obj.size ...
-                    obj.size], 'FaceColor','k');
+                    obj.size], 'FaceColor', [0.5 0.5 0.5]);
             elseif strcmp(obj.label,'mixed')
                 rectangle('Position',[obj.x(1) obj.y(1) obj.size ...
                     obj.size], 'FaceColor','y');

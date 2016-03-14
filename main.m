@@ -6,8 +6,8 @@ clc
 clf
 
 load test1
-r0 = 2.0;
-minradius = 0.4;
+r0 = test.radius;
+minradius = 0.3;
 
 % containing box
 B = Box(test.box(1,:),test.box(2,:));
@@ -20,14 +20,16 @@ DS = DisjointSets();
 freeBoxes = cell(30, 1);
 numFree = 0;
 
+startPos = [test.start(1)-test.radius test.start(2)-test.radius...
+    2*test.radius 2*test.radius];
+goalPos = [test.goal(1)-test.radius test.goal(2)-test.radius...
+    2*test.radius 2*test.radius];
+
 disp('Mixed box assignment phase...')
 [B,Q] = getmixedbox(Q);
 while ~isempty(B) % there is a 'mixed' box      
     BS = B.split; % all boxes are initilized as 'mixed'
     for i = 1:4
-        BS{i}.draw();
-        hold on
-        
         if BS{i}.radius < minradius
             BS{i}.label = 'small';
         else
@@ -47,8 +49,10 @@ for i = 1:length(Q)
     if strcmp(Q{i}.label,'stuckorfree')
         if (inclusiontest(Q{i},E))
             Q{i}.label = 'stuck';
+            disp('stuck!!!');
         else
             Q{i}.label = 'free';
+            disp('free!!!');
             numFree = numFree + 1;
             freeBoxes{numFree} = Q{i};
         end
@@ -66,7 +70,6 @@ for f1 = 1:numFree
       else
          if freeBoxes{f1}.sharesEdgeWith(freeBoxes{f2})
             DS.union(freeBoxes{f1}, freeBoxes{f2});
-            fprintf('Unioning box %d with box %d\n', f1, f2);
          end
       end
    end
@@ -94,6 +97,11 @@ for i = 1:length(E)
     p = E{i};
     fill(p(1,:), p(2,:), 'm')
 end
+
+rectangle('Position', startPos, 'Curvature', [1 1],...
+    'FaceColor', 'w');
+rectangle('Position', goalPos, 'Curvature', [1 1],...
+    'FaceColor', 'w');
 
 DS.print();
 
