@@ -26,14 +26,7 @@ classdef DisjointSets < handle  % Union-Find data structure
         function addBox(this, b)
             this.numSets = this.numSets + 1;
             this.setList{this.numSets} = BoxList();
-            this.setList{this.numSets}.addBox(b);
-            
-            % Search through every box. If it is a neighbor of b,
-            % union it with b.
-            adj = getAdjBoxes(b);
-            for bx = 1:length(adj)
-                this.union(b, adj{bx});
-            end
+            this.setList{this.numSets}.addBox(b);            
         end
         
         function addList(this, l)
@@ -75,8 +68,8 @@ classdef DisjointSets < handle  % Union-Find data structure
                 disp('-------Set Start--------');
                 l = this.setList{s};
                 for b = 1:l.numBoxes
-                    disp(l.list{b}.x);
-                    disp(l.list{b}.y);
+                    disp(l.list{b});
+                    disp(l.list{b});
                 end
                 disp('-------Set End--------');
             end

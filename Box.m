@@ -206,10 +206,12 @@ classdef Box < handle % supposed to be square
             elseif strcmp(obj.label,'small')
                 rectangle('Position',[obj.x(1) obj.y(1) obj.size ...
                     obj.size], 'FaceColor','k');
-            elseif strcmp(obj.label,'mixed') || strcmp(obj.label,...
-                    'stuckorfree')
+            elseif strcmp(obj.label,'mixed')
                 rectangle('Position',[obj.x(1) obj.y(1) obj.size ...
                     obj.size], 'FaceColor','y');
+            elseif strcmp(obj.label,'stuckorfree')
+                rectangle('Position',[obj.x(1) obj.y(1) obj.size ...
+                    obj.size], 'FaceColor','w');
             end
            
            drawnow
