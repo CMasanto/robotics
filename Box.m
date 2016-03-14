@@ -194,6 +194,8 @@ classdef Box < handle % supposed to be square
            end
         end
         
+        
+        
         function draw(obj)
             if strcmp(obj.label,'stuck')
                 rectangle('Position',[obj.x(1) obj.y(1) obj.size ...
@@ -209,7 +211,10 @@ classdef Box < handle % supposed to be square
                 rectangle('Position',[obj.x(1) obj.y(1) obj.size ...
                     obj.size], 'FaceColor','y');
             end
-            
+           
+           drawnow
+           hold on
+
            hasChildren = ~isempty(obj.topLeftChild);
            if hasChildren
                 obj.topLeftChild.draw();

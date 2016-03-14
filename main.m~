@@ -10,17 +10,20 @@ minradius = 0.4;
 % containing box
 B = Box(test.box(1,:),test.box(2,:));
 root = B;
+root.draw();
 Q = {B};
 E = test.env;
 DS = DisjointSets();
 
 disp('Mixed box assignment phase...')
 [B,Q] = getmixedbox(Q);
-while ~isempty(B) % there is a 'mixed' box    
-    root.draw();
+while ~isempty(B) % there is a 'mixed' box  
+    clf
     
     BS = B.split; % all boxes are initilized as 'mixed'
     for i = 1:4
+        BS
+        
         if BS{i}.radius < minradius
             BS{i}.label = 'small';
         else
@@ -37,7 +40,8 @@ end
 
 disp('Union-Find phase...')
 for i = 1:length(Q)
-    
+    clf
+    root.draw();
     
     if strcmp(Q{i}.label,'stuckorfree')
         if (inclusiontest(Q{i},E))

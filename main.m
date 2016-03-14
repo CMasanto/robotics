@@ -2,6 +2,8 @@
 %
 % This should be the main program to run your program!!
 %
+clc
+clf
 
 load test1
 r0 = 2.0;
@@ -9,19 +11,21 @@ minradius = 0.4;
 
 % containing box
 B = Box(test.box(1,:),test.box(2,:));
+
 root = B;
+root.draw();
 Q = {B};
 E = test.env;
 DS = DisjointSets();
 
 disp('Mixed box assignment phase...')
 [B,Q] = getmixedbox(Q);
-while ~isempty(B) % there is a 'mixed' box  
-    clf
-    root.draw();
-    
+while ~isempty(B) % there is a 'mixed' box      
     BS = B.split; % all boxes are initilized as 'mixed'
     for i = 1:4
+        BS{i}.draw();
+        hold on
+        
         if BS{i}.radius < minradius
             BS{i}.label = 'small';
         else
@@ -38,8 +42,7 @@ end
 
 disp('Union-Find phase...')
 for i = 1:length(Q)
-    clf
-    root.draw();
+    hold on
     
     if strcmp(Q{i}.label,'stuckorfree')
         if (inclusiontest(Q{i},E))
@@ -67,9 +70,9 @@ for i = 1:length(Q)
     end
 end
 
-clc
-clf
 DS
 
 disp('Process complete.')
+axis([0 root.size 0 root.size])
+
 %axis equal, axis tight, axis off
