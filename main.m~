@@ -16,8 +16,7 @@ DS = DisjointSets();
 
 disp('Mixed box assignment phase...')
 [B,Q] = getmixedbox(Q);
-while ~isempty(B) % there is a 'mixed' box  
-    clf
+while ~isempty(B) % there is a 'mixed' box    
     root.draw();
     
     BS = B.split; % all boxes are initilized as 'mixed'
@@ -38,8 +37,7 @@ end
 
 disp('Union-Find phase...')
 for i = 1:length(Q)
-    clf
-    root.draw();
+    
     
     if strcmp(Q{i}.label,'stuckorfree')
         if (inclusiontest(Q{i},E))

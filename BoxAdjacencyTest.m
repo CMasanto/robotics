@@ -9,14 +9,14 @@ BS1111 = BS111{3}.split();
 BS11111 = BS1111{4}.split();
 
 box.draw();
-bTest = BS1{2};
+bTest = BS11111{3};
 rectangle('Position',[bTest.x(1) bTest.y(1) bTest.size bTest.size],...
     'FaceColor','y');
 
 
 bTestAdj = bTest.getAdjBoxes();
 for b = 1:length(bTestAdj)
-    adjBox = bTestAdj{b}
+    adjBox = bTestAdj{b};
     x = adjBox.x(1);
     y = adjBox.y(1);
     w = adjBox.size;

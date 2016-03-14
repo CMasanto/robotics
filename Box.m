@@ -195,7 +195,21 @@ classdef Box < handle % supposed to be square
         end
         
         function draw(obj)
-           rectangle('Position',[obj.x(1) obj.y(1) obj.size obj.size]);
+            if strcmp(obj.label,'stuck')
+                rectangle('Position',[obj.x(1) obj.y(1) obj.size ...
+                    obj.size], 'FaceColor','r');
+            elseif strcmp(obj.label,'free')
+                rectangle('Position',[obj.x(1) obj.y(1) obj.size ...
+                    obj.size], 'FaceColor','g');
+            elseif strcmp(obj.label,'small')
+                rectangle('Position',[obj.x(1) obj.y(1) obj.size ...
+                    obj.size], 'FaceColor','k');
+            elseif strcmp(obj.label,'mixed') || strcmp(obj.label,...
+                    'stuckorfree')
+                rectangle('Position',[obj.x(1) obj.y(1) obj.size ...
+                    obj.size], 'FaceColor','y');
+            end
+            
            hasChildren = ~isempty(obj.topLeftChild);
            if hasChildren
                 obj.topLeftChild.draw();

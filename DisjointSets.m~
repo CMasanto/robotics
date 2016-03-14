@@ -10,7 +10,6 @@ classdef DisjointSets < handle  % Union-Find data structure
         end
         
         function y = find(this, x)  % returns the list in which x is found
-            y = [];
             for s = 1:this.numSets
                 boxList = this.setList{s};
                 for b = 1:boxList.numBoxes
@@ -31,9 +30,7 @@ classdef DisjointSets < handle  % Union-Find data structure
             % Search through every box. If it is a neighbor of b,
             % union it with b.
             adj = getAdjBoxes(b);
-            for bx = 1:length(adj)
-                this.union(b, adj{bx});
-            end
+            
         end
         
         function addList(this, l)
@@ -55,7 +52,7 @@ classdef DisjointSets < handle  % Union-Find data structure
             xList = this.find(x);
             yList = this.find(y);
             if isempty(xList) || isempty(yList)
-                return;  % Do nothing if x or y are not in any list.
+                return;  % Do nothing if x or y are not in thi
             end
             
             for b = 1:yList.numBoxes
