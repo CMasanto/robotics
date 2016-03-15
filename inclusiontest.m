@@ -10,7 +10,7 @@ for i = 1:length(E) % iterates through polygons
     P = E{i};
     P = [P P(:,1)]; % extends P by adding the first vertex 
     for j = 1:size(P,2)-1 % iterates through edges of polygon
-        [s,p] = sep(B.center,P(:,j:j+1));
+        [s,p] = sep(B.center, P(:, j:j+1))
         if s < ms	% s is smaller than current ms 
             ms = s;
             iP = i; % index of polygon
